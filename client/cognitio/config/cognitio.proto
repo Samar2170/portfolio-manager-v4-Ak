@@ -1,0 +1,37 @@
+syntax = "proto3";
+package cognitio;
+option go_package = "./cauth";
+
+message SignupRequest {
+  string email = 1;
+  string username = 2;
+  string password = 3;
+}
+
+message SignupResponse {
+  string response = 1;
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string token = 1;
+}
+
+message AuthRequest {
+    string token = 1;
+}
+
+message AuthResponse {
+    string username =1;
+    string user_cid = 2;
+}
+
+service AuthService {
+  rpc Signup(SignupRequest) returns (SignupResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Authenticate(AuthRequest) returns (AuthResponse);
+}

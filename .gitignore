@@ -1,0 +1,9 @@
+.env
+design.md
+principles.md
+gorm.db
+.vscode/
+
+__debug_bin*
+
+/uploads/**
