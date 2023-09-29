@@ -36,18 +36,20 @@ type TradeInterface interface {
 }
 
 // lets do it blockchain style
-func RegisterTrade(td TradeInterface) {
+func RegisterTrade(td TradeInterface) error {
+	var err error
 	switch td := td.(type) {
 	case *pstock.StockTrade:
-		pstock.RegisterStockTrade(td)
+		err = pstock.RegisterStockTrade(td)
 	case *pbond.BondTrade:
-		pbond.RegisterBondTrade(td)
+		err = pbond.RegisterBondTrade(td)
 	case *pmutualfund.MutualFundTrade:
-		pmutualfund.RegisterMutualFundTrade(td)
+		err = pmutualfund.RegisterMutualFundTrade(td)
 	case *pets.ETSTrade:
-		pets.RegisterETSTrade(td)
+		err = pets.RegisterETSTrade(td)
 	}
 	createHashBlockForTrade(&td)
+	return err
 }
 
 func createHashBlockForTrade(td *TradeInterface) error {

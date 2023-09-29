@@ -14,6 +14,10 @@ import (
 	"gorm.io/gorm"
 )
 
+func init() {
+	db.DB.AutoMigrate(&ETSTrade{}, &ETSHolding{})
+}
+
 type ETSTrade struct {
 	*gorm.Model
 	ID        int

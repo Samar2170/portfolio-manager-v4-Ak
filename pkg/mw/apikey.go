@@ -2,6 +2,8 @@ package mw
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/samar2170/portfolio-manager-v4/internal"
+	"github.com/samar2170/portfolio-manager-v4/pkg/response"
 	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
 )
 
@@ -15,39 +17,34 @@ type Credentials struct {
 	ApiKey string `json:"api_key"`
 }
 
-func ApiKeyMiddleware(secretKey string) echo.MiddlewareFunc {
+var credentials map[string]string = map[string]string{}
+
+func ApiKeyMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			// var apiKey string
+			var creds Credentials
 			if c.Request().Method == "OPTIONS" {
 				return next(c)
 			}
 			if utils.ArrayContains(ExemptedPaths, c.Request().URL.Path) {
 				return next(c)
 			}
-			// if c.Request().Method == "POST" {
-			// 	apiKey = c.Bind(Credentials)
-			// }
+			if c.Request().Method == "POST" || c.Request().Method == "PUT" {
+				api_key := c.Request().Header.Get("api_key")
+				creds.ApiKey = api_key
+			}
+			if c.Request().Method == "GET" {
+				creds.ApiKey = c.QueryParam("api_key")
+			}
+			if creds == (Credentials{}) || creds.ApiKey == "" {
+				return c.JSON(response.UnauthorizedResponseEcho("Missing Api Key"))
+			}
 
-			// authHeader := c.Request().Header.Get("Authorization")
-			// if authHeader == "" {
-			// 	return c.JSON(response.UnauthorizedResponseEcho("Missing Authorization Header"))
-			// }
-			// tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
-			// token, err := jwt.ParseWithClaims(tokenString, &JwtCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-			// 	return []byte(secretKey), nil
-			// })
-			// if err != nil {
-			// 	return c.JSON(response.UnauthorizedResponseEcho(err.Error()))
-			// }
-			// claims, ok := token.Claims.(*JwtCustomClaims)
-			// if !ok {
-			// 	return c.JSON(response.UnauthorizedResponseEcho("Invalid Token"))
-			// }
-			// log.Println(claims)
-			// c.Set("user_cid", claims.UserCID)
-			// c.Set("username", claims.Username)
-			// return next(c)
+			user, err := internal.GetUserByApiKey(creds.ApiKey)
+			if err != nil {
+				return c.JSON(response.InternalServerErrorResponseEcho(err.Error()))
+			}
+			c.Set("user", user)
 			return next(c)
 		}
 	}

@@ -13,7 +13,7 @@ type User struct {
 
 	Password string
 	Email    string
-	ApiKey   string
+	ApiKey   string `gorm:"uniqueIndex"`
 }
 
 // User signs up/login, we call rpc, save CID and username,
@@ -41,6 +41,11 @@ func GetUserByCID(userCID string) (User, error) {
 func GetUserByUsername(username string) (User, error) {
 	var u User
 	err := db.DB.Where("username = ?", username).First(&u).Error
+	return u, err
+}
+func GetUserByApiKey(hashedapiKey string) (User, error) {
+	var u User
+	err := db.DB.Where("api_key = ?", hashedapiKey).Find(&u).Error
 	return u, err
 }
 

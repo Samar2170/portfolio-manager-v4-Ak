@@ -55,15 +55,15 @@ func GetAccountsByUserCID(userCID string) ([]BankAccount, []DematAccount, []Gene
 	var bankAccounts []BankAccount
 	var dematAccounts []DematAccount
 	var generalAccounts []GeneralAccount
-	err := db.DB.Where("user_cid = ?", userCID).Find(&bankAccounts).Error
+	err := db.DB.Where("user_c_id = ?", userCID).Find(&bankAccounts).Error
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	err = db.DB.Where("user_cid = ?", userCID).Find(&dematAccounts).Error
+	err = db.DB.Where("user_c_id = ?", userCID).Find(&dematAccounts).Error
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	err = db.DB.Where("user_cid = ?", userCID).Find(&generalAccounts).Error
+	err = db.DB.Where("user_c_id = ?", userCID).Find(&generalAccounts).Error
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -72,7 +72,7 @@ func GetAccountsByUserCID(userCID string) ([]BankAccount, []DematAccount, []Gene
 
 func GetDematAccountsByUserCID(userCID string) ([]DematAccount, error) {
 	var dematAccounts []DematAccount
-	err := db.DB.Where("user_cid = ?", userCID).Find(&dematAccounts).Error
+	err := db.DB.Where("user_c_id = ?", userCID).Find(&dematAccounts).Error
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func GetDematAccountsByUserCID(userCID string) ([]DematAccount, error) {
 }
 func GetBankAccountsByUserCID(userCID string) ([]BankAccount, error) {
 	var bankAccounts []BankAccount
-	err := db.DB.Where("user_cid = ?", userCID).Find(&bankAccounts).Error
+	err := db.DB.Where("user_c_id = ?", userCID).Find(&bankAccounts).Error
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func GetBankAccountsByUserCID(userCID string) ([]BankAccount, error) {
 
 func GetGeneralAccountsByUserCID(userCID string) ([]GeneralAccount, error) {
 	var generalAccounts []GeneralAccount
-	err := db.DB.Where("user_cid = ?", userCID).Find(&generalAccounts).Error
+	err := db.DB.Where("user_c_id = ?", userCID).Find(&generalAccounts).Error
 	if err != nil {
 		return nil, err
 	}

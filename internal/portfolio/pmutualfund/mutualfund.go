@@ -12,6 +12,10 @@ import (
 	"gorm.io/gorm"
 )
 
+func init() {
+	db.DB.AutoMigrate(&MutualFundTrade{}, &MutualFundHolding{})
+}
+
 type MutualFundTrade struct {
 	*gorm.Model
 	ID           int

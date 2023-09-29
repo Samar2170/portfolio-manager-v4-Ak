@@ -91,9 +91,11 @@ func GenerateApiKey(token string) (string, error) {
 	return apiKey, nil
 }
 
-// func VerifyApiKey(apiKey string) bool {
-
-// }
+func GetUserByApiKey(apiKey string) (models.User, error) {
+	hashedApiKey := customHash(apiKey)
+	user, err := models.GetUserByApiKey(hashedApiKey)
+	return user, err
+}
 
 func Signup(s SignupRequest) error {
 	var err error

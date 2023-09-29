@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const TradeDateFormat = "2006-01-02"
+
 func init() {
 	db.DB.AutoMigrate(&User{})
 	db.DB.AutoMigrate(&BankAccount{})

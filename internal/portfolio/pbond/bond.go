@@ -2,13 +2,19 @@ package pbond
 
 import (
 	"errors"
-	"strconv"
+	"time"
 
+	"github.com/samar2170/portfolio-manager-v4/internal"
 	"github.com/samar2170/portfolio-manager-v4/internal/models"
 	"github.com/samar2170/portfolio-manager-v4/pkg/db"
+	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
 	"github.com/samar2170/portfolio-manager-v4/security/bond"
 	"gorm.io/gorm"
 )
+
+func init() {
+	db.DB.AutoMigrate(&BondTrade{}, &BondHolding{})
+}
 
 type BondTrade struct {
 	*gorm.Model
@@ -18,29 +24,25 @@ type BondTrade struct {
 	Quantity  int
 	Price     float64
 	TradeType string
-	TradeDate string
+	TradeDate time.Time
 	Account   models.DematAccount
 }
 
-func NewBondTrade(symbol string, quantity, price, tradeDate, tradeType string) (*BondTrade, error) {
+func NewBondTrade(symbol string, quantity int, price float64, tradeDate, tradeType string) (*BondTrade, error) {
 	bond, err := bond.GetBondBySymbol(symbol)
 	if err != nil {
 		return nil, err
 	}
-	quantityParsed, err := strconv.ParseInt(quantity, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-	priceParsed, err := strconv.ParseFloat(price, 64)
+	t, err := utils.ParseTime(tradeDate, internal.TradeDateFormat)
 	if err != nil {
 		return nil, err
 	}
 	return &BondTrade{
 		BondID:    bond.ID,
-		Quantity:  int(quantityParsed),
-		Price:     priceParsed,
+		Quantity:  quantity,
+		Price:     price,
 		TradeType: tradeType,
-		TradeDate: tradeDate,
+		TradeDate: t,
 	}, nil
 }
 

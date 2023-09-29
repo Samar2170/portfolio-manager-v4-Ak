@@ -6,7 +6,7 @@ func JSONResponseEcho(data interface{}) (int, interface{}) {
 	return http.StatusOK, data
 }
 
-func DataResponseEcho() {}
+// func DataResponseEcho(data interface{}) (int, interface) {}
 
 func SuccessResponseEcho(message string) (int, map[string]string) {
 	return http.StatusOK, map[string]string{

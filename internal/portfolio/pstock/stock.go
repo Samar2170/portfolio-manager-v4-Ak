@@ -2,55 +2,60 @@ package pstock
 
 import (
 	"errors"
-	"strconv"
+	"time"
 
+	"github.com/samar2170/portfolio-manager-v4/internal"
 	"github.com/samar2170/portfolio-manager-v4/internal/models"
 	"github.com/samar2170/portfolio-manager-v4/pkg/db"
+	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
 	"github.com/samar2170/portfolio-manager-v4/security/stock"
 	"gorm.io/gorm"
 )
 
+func init() {
+	db.DB.AutoMigrate(&StockTrade{}, &StockHolding{})
+}
+
 type StockTrade struct {
 	*gorm.Model
 	ID        int
+	Stock     stock.Stock `gorm:"foreignKey:StockID"`
 	StockID   int
-	Stock     *stock.Stock
 	Quantity  int
 	Price     float64
 	TradeType string
-	TradeDate string
-	Account   models.DematAccount
+	TradeDate time.Time
+	Account   models.DematAccount `gorm:"foreignKey:AccountID"`
+	AccountID int
 }
 
-func NewStockTrade(symbol string, quantity, price, tradeDate, tradeType string) (*StockTrade, error) {
+func NewStockTrade(symbol string, quantity int, price float64, tradeDate, tradeType string) (*StockTrade, error) {
 	stock, err := stock.GetStockBySymbol(symbol)
 	if err != nil {
 		return nil, err
 	}
-	quantityParsed, err := strconv.ParseInt(quantity, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-	priceParsed, err := strconv.ParseFloat(price, 64)
+	t, err := utils.ParseTime(tradeDate, internal.TradeDateFormat)
 	if err != nil {
 		return nil, err
 	}
 	return &StockTrade{
 		StockID:   stock.ID,
-		Quantity:  int(quantityParsed),
-		Price:     priceParsed,
+		Quantity:  quantity,
+		Price:     price,
 		TradeType: tradeType,
-		TradeDate: tradeDate,
+		TradeDate: t,
 	}, nil
 }
 
 type StockHolding struct {
 	*gorm.Model
-	StockID  int
-	Stock    *stock.Stock
-	Quantity int
-	BuyPrice float64
-	Account  models.DematAccount
+	ID        uint
+	Stock     stock.Stock `gorm:"foreignKey:StockID"`
+	StockID   int
+	Quantity  int
+	BuyPrice  float64
+	Account   models.DematAccount `gorm:"foreignKey:AccountID"`
+	AccountID int
 }
 
 func (s *StockTrade) create() error {
