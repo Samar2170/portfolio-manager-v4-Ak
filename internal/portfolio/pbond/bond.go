@@ -2,6 +2,7 @@ package pbond
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/samar2170/portfolio-manager-v4/internal"
@@ -26,9 +27,10 @@ type BondTrade struct {
 	TradeType string
 	TradeDate time.Time
 	Account   models.DematAccount
+	AccountID int
 }
 
-func NewBondTrade(symbol string, quantity int, price float64, tradeDate, tradeType string) (*BondTrade, error) {
+func NewBondTrade(symbol string, quantity int, price float64, tradeDate, tradeType, accountCode, userCID string) (*BondTrade, error) {
 	bond, err := bond.GetBondBySymbol(symbol)
 	if err != nil {
 		return nil, err
@@ -37,12 +39,19 @@ func NewBondTrade(symbol string, quantity int, price float64, tradeDate, tradeTy
 	if err != nil {
 		return nil, err
 	}
+	account, err := models.GetDematAccountByCode(accountCode, userCID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &BondTrade{
 		BondID:    bond.ID,
 		Quantity:  quantity,
 		Price:     price,
 		TradeType: tradeType,
 		TradeDate: t,
+		Account:   account,
+		AccountID: account.ID,
 	}, nil
 }
 
@@ -76,33 +85,18 @@ func (b *BondHolding) getInvestedValue() float64 {
 	return float64(b.Quantity) * b.BuyPrice
 }
 
-func getBondHolding(bondId int, userCID string) (BondHolding, error) {
-	var bondHolding BondHolding
-	dematAccounts, _ := models.GetDematAccountsByUserCID(userCID)
-	dematIds := make([]int, len(dematAccounts))
-	for i, account := range dematAccounts {
-		dematIds[i] = account.ID
-	}
-	err := db.DB.Where("bond_id = ? AND account_id IN ?", bondId, dematIds).First(&bondHolding).Error
-	return bondHolding, err
-}
-
-func bondHoldingExists(bondId int, userCID string) bool {
-	return db.DB.Where("bond_id = ? AND account_id IN ?", bondId, userCID).First(&BondHolding{}).Error == nil
-}
-
 func RegisterBondTrade(b *BondTrade) error {
 	err := b.create()
 	if err != nil {
 		return err
 	}
-	existingHolding := bondHoldingExists(b.BondID, b.Account.UserCID)
+	existingHolding := bondHoldingExists(b.BondID, b.AccountID)
 	if existingHolding {
-		holding, err := getBondHolding(b.BondID, b.Account.UserCID)
+		holding, err := getBondHolding(b.BondID, b.AccountID)
 		if err != nil {
 			return err
 		}
-		if b.TradeType == "buy" {
+		if strings.ToLower(b.TradeType) == "buy" {
 			holding.Quantity += b.Quantity
 			holding.BuyPrice = (holding.getInvestedValue() + b.GetInvestedValue()) / (float64(holding.Quantity) + float64(b.Quantity))
 		} else {
@@ -113,7 +107,7 @@ func RegisterBondTrade(b *BondTrade) error {
 			return err
 		}
 	} else {
-		if b.TradeType == "sell" {
+		if strings.ToLower(b.TradeType) == "sell" {
 			return errors.New("cannot sell bond that you do not own")
 		} else {
 			holding := BondHolding{
@@ -129,4 +123,14 @@ func RegisterBondTrade(b *BondTrade) error {
 		}
 	}
 	return nil
+}
+
+func getBondHolding(bondId int, accountID int) (BondHolding, error) {
+	var bondHolding BondHolding
+	err := db.DB.Where("bond_id = ? AND account_id = ?", bondId, accountID).First(&bondHolding).Error
+	return bondHolding, err
+}
+
+func bondHoldingExists(bondId int, accountID int) bool {
+	return db.DB.Where("bond_id = ? AND account_id = ?", bondId, accountID).First(&BondHolding{}).Error == nil
 }

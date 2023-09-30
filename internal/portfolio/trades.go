@@ -48,7 +48,7 @@ func RegisterTrade(td TradeInterface) error {
 	case *pets.ETSTrade:
 		err = pets.RegisterETSTrade(td)
 	}
-	createHashBlockForTrade(&td)
+	// createHashBlockForTrade(&td)
 	return err
 }
 

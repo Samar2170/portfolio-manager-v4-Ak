@@ -2,7 +2,6 @@ package pets
 
 import (
 	"errors"
-	"strconv"
 	"time"
 
 	"github.com/samar2170/portfolio-manager-v4/internal"
@@ -21,16 +20,17 @@ func init() {
 type ETSTrade struct {
 	*gorm.Model
 	ID        int
+	ETS       ets.ETS
 	ETSID     int
-	ETS       *ets.ETS
 	Quantity  int
 	Price     float64
 	TradeType string
 	TradeDate time.Time
 	Account   models.DematAccount
+	AccountID int
 }
 
-func NewETSTrade(symbol string, quantity, price, tradeDate, tradeType string) (*ETSTrade, error) {
+func NewETSTrade(symbol string, quantity int, price float64, tradeDate, tradeType, accountCode, userCID string) (*ETSTrade, error) {
 	ets, err := ets.GetETSBySymbol(symbol)
 	if err != nil {
 		return nil, err
@@ -39,20 +39,18 @@ func NewETSTrade(symbol string, quantity, price, tradeDate, tradeType string) (*
 	if err != nil {
 		return nil, errors.New("invalid trade date")
 	}
-	quantityParsed, err := strconv.ParseInt(quantity, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-	priceParsed, err := strconv.ParseFloat(price, 64)
+	account, err := models.GetDematAccountByCode(accountCode, userCID)
 	if err != nil {
 		return nil, err
 	}
 	return &ETSTrade{
 		ETSID:     ets.ID,
-		Quantity:  int(quantityParsed),
-		Price:     priceParsed,
+		Quantity:  quantity,
+		Price:     price,
 		TradeType: tradeType,
 		TradeDate: tradeDateParsed,
+		Account:   account,
+		AccountID: account.ID,
 	}, nil
 }
 

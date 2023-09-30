@@ -2,12 +2,13 @@ package pmutualfund
 
 import (
 	"errors"
-	"strconv"
+	"strings"
 	"time"
 
 	"github.com/samar2170/portfolio-manager-v4/internal"
 	"github.com/samar2170/portfolio-manager-v4/internal/models"
 	"github.com/samar2170/portfolio-manager-v4/pkg/db"
+	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
 	mutualfund "github.com/samar2170/portfolio-manager-v4/security/mutual-fund"
 	"gorm.io/gorm"
 )
@@ -19,48 +20,50 @@ func init() {
 type MutualFundTrade struct {
 	*gorm.Model
 	ID           int
+	MutualFund   mutualfund.MutualFund
 	MutualFundID int
-	MutualFund   *mutualfund.MutualFund
 	Quantity     float64
 	Price        float64
 	TradeType    string
 	TradeDate    time.Time
 	Account      models.DematAccount
+	AccountID    int
 }
 
-func NewMutualFundTrade(mutualFundID int, quantity, price, tradeDate, tradeType string) (*MutualFundTrade, error) {
+func NewMutualFundTrade(mutualFundID int, quantity float64, price float64, tradeDate, tradeType, accountCode, userCID string) (*MutualFundTrade, error) {
 	mutualFund, err := mutualfund.GetMutualFundByID(mutualFundID)
 	if err != nil {
 		return nil, err
 	}
-	tradeDateParsed, err := time.Parse(tradeDate, internal.TradeDateFormat)
+	tradeDateParsed, err := utils.ParseTime(tradeDate, internal.TradeDateFormat)
 	if err != nil {
 		return nil, errors.New("invalid trade date")
 	}
-	quantityParsed, err := strconv.ParseFloat(quantity, 64)
+	account, err := models.GetDematAccountByCode(accountCode, userCID)
 	if err != nil {
 		return nil, err
 	}
-	priceParsed, err := strconv.ParseFloat(price, 64)
-	if err != nil {
-		return nil, err
-	}
+
 	return &MutualFundTrade{
 		MutualFundID: mutualFund.ID,
-		Quantity:     quantityParsed,
-		Price:        priceParsed,
+		Quantity:     float64(quantity),
+		Price:        price,
 		TradeType:    tradeType,
 		TradeDate:    tradeDateParsed,
+		Account:      account,
+		AccountID:    account.ID,
 	}, nil
 }
 
 type MutualFundHolding struct {
 	*gorm.Model
+	ID           int
+	MutualFund   mutualfund.MutualFund
 	MutualFundID int
-	MutualFund   *mutualfund.MutualFund
 	Quantity     float64
 	BuyPrice     float64
 	Account      models.DematAccount
+	AccountID    int
 }
 
 func (m *MutualFundTrade) create() error {
@@ -83,32 +86,18 @@ func (mf *MutualFundHolding) getInvestedValue() float64 {
 	return float64(mf.Quantity) * mf.BuyPrice
 }
 
-func getMutualFundHolding(mfId int, userCID string) (MutualFundHolding, error) {
-	var mfHolding MutualFundHolding
-	dematAccounts, _ := models.GetDematAccountsByUserCID(userCID)
-	dematIds := make([]int, len(dematAccounts))
-	for i, account := range dematAccounts {
-		dematIds[i] = account.ID
-	}
-	err := db.DB.Where("mutual_fund_id = ? AND account_id IN ?", mfId, dematIds).First(&mfHolding).Error
-	return mfHolding, err
-}
-
-func mutualFundHoldingExists(mfId int, userCID string) bool {
-	return db.DB.Where("mutual_fund_id = ? AND account_id IN ?", mfId, userCID).First(&MutualFundHolding{}).Error == nil
-}
 func RegisterMutualFundTrade(m *MutualFundTrade) error {
 	err := m.create()
 	if err != nil {
 		return err
 	}
-	existingHolding := mutualFundHoldingExists(m.MutualFundID, m.Account.UserCID)
+	existingHolding := mutualFundHoldingExists(m.MutualFundID, m.AccountID)
 	if existingHolding {
-		holding, err := getMutualFundHolding(m.MutualFundID, m.Account.UserCID)
+		holding, err := getMutualFundHolding(m.MutualFundID, m.AccountID)
 		if err != nil {
 			return err
 		}
-		if m.TradeType == "buy" {
+		if strings.ToLower(m.TradeType) == "buy" {
 			holding.Quantity += m.Quantity
 			holding.BuyPrice = (holding.getInvestedValue() + m.GetInvestedValue()) / (float64(holding.Quantity) + float64(m.Quantity))
 		} else {
@@ -119,7 +108,7 @@ func RegisterMutualFundTrade(m *MutualFundTrade) error {
 			return err
 		}
 	} else {
-		if m.TradeType == "sell" {
+		if strings.ToLower(m.TradeType) == "sell" {
 			return errors.New("cannot sell mutual fund that you do not own")
 		} else {
 			holding := MutualFundHolding{
@@ -135,4 +124,14 @@ func RegisterMutualFundTrade(m *MutualFundTrade) error {
 		}
 	}
 	return nil
+}
+
+func getMutualFundHolding(mfId int, accountID int) (MutualFundHolding, error) {
+	var mfHolding MutualFundHolding
+	err := db.DB.Where("mutual_fund_id = ? AND account_id = ?", mfId, accountID).First(&mfHolding).Error
+	return mfHolding, err
+}
+
+func mutualFundHoldingExists(mfId int, accountID int) bool {
+	return db.DB.Where("mutual_fund_id = ? AND account_id = ?", mfId, accountID).First(&MutualFundHolding{}).Error == nil
 }

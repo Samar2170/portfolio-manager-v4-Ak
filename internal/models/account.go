@@ -95,3 +95,9 @@ func GetGeneralAccountsByUserCID(userCID string) ([]GeneralAccount, error) {
 	}
 	return generalAccounts, nil
 }
+
+func GetDematAccountByCode(accountCode, userCID string) (DematAccount, error) {
+	var da DematAccount
+	err := db.DB.Where("account_code = ? AND user_c_id = ?", accountCode, userCID).First(&da).Error
+	return da, err
+}

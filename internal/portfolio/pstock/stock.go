@@ -2,6 +2,7 @@ package pstock
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/samar2170/portfolio-manager-v4/internal"
@@ -29,7 +30,7 @@ type StockTrade struct {
 	AccountID int
 }
 
-func NewStockTrade(symbol string, quantity int, price float64, tradeDate, tradeType string) (*StockTrade, error) {
+func NewStockTrade(symbol string, quantity int, price float64, tradeDate, tradeType, accountCode, userCID string) (*StockTrade, error) {
 	stock, err := stock.GetStockBySymbol(symbol)
 	if err != nil {
 		return nil, err
@@ -38,12 +39,19 @@ func NewStockTrade(symbol string, quantity int, price float64, tradeDate, tradeT
 	if err != nil {
 		return nil, err
 	}
+	account, err := models.GetDematAccountByCode(accountCode, userCID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &StockTrade{
 		StockID:   stock.ID,
 		Quantity:  quantity,
 		Price:     price,
 		TradeType: tradeType,
 		TradeDate: t,
+		Account:   account,
+		AccountID: account.ID,
 	}, nil
 }
 
@@ -83,13 +91,13 @@ func RegisterStockTrade(s *StockTrade) error {
 	if err != nil {
 		return err
 	}
-	existingHolding := stockHoldingExists(s.StockID, s.Account.UserCID)
+	existingHolding := stockHoldingExists(s.StockID, s.AccountID)
 	if existingHolding {
-		holding, err := getStockHolding(s.StockID, s.Account.UserCID)
+		holding, err := getStockHolding(s.StockID, s.AccountID)
 		if err != nil {
 			return err
 		}
-		if s.TradeType == "buy" {
+		if strings.ToLower(s.TradeType) == "buy" {
 			holding.Quantity += s.Quantity
 			holding.BuyPrice = (holding.GetInvestedValue() + s.GetInvestedValue()) / (float64(holding.Quantity) + float64(s.Quantity))
 		} else {
@@ -100,7 +108,7 @@ func RegisterStockTrade(s *StockTrade) error {
 			return err
 		}
 	} else {
-		if s.TradeType == "sell" {
+		if strings.ToLower(s.TradeType) == "sell" {
 			return errors.New("cannot sell stock that you do not own")
 		} else {
 			holding := StockHolding{
@@ -118,17 +126,12 @@ func RegisterStockTrade(s *StockTrade) error {
 	return nil
 }
 
-func getStockHolding(stockId int, userCID string) (StockHolding, error) {
+func getStockHolding(stockId int, accountID int) (StockHolding, error) {
 	var stockHolding StockHolding
-	dematAccounts, _ := models.GetDematAccountsByUserCID(userCID)
-	dematIds := make([]int, len(dematAccounts))
-	for i, account := range dematAccounts {
-		dematIds[i] = account.ID
-	}
-	err := db.DB.Where("stock_id = ? AND account_id IN ?", stockId, dematIds).First(&stockHolding).Error
+	err := db.DB.Where("stock_id = ? AND account_id = ?", stockId, accountID).First(&stockHolding).Error
 	return stockHolding, err
 }
 
-func stockHoldingExists(stockId int, userCID string) bool {
-	return db.DB.Where("stock_id = ? AND account_id IN ?", stockId, userCID).First(&StockHolding{}).Error == nil
+func stockHoldingExists(stockId int, accountID int) bool {
+	return db.DB.Where("stock_id = ? AND account_id = ?", stockId, accountID).First(&StockHolding{}).Error == nil
 }
