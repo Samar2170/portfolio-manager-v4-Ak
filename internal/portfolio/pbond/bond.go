@@ -20,8 +20,8 @@ func init() {
 type BondTrade struct {
 	*gorm.Model
 	ID        int
+	Bond      bond.Bond
 	BondID    int
-	Bond      *bond.Bond
 	Quantity  int
 	Price     float64
 	TradeType string
@@ -57,11 +57,14 @@ func NewBondTrade(symbol string, quantity int, price float64, tradeDate, tradeTy
 
 type BondHolding struct {
 	*gorm.Model
-	BondID   int
-	Bond     *bond.Bond
-	Quantity int
-	BuyPrice float64
-	Account  models.DematAccount
+	ID     int
+	Bond   bond.Bond
+	BondID int
+
+	Quantity  int
+	BuyPrice  float64
+	Account   models.DematAccount
+	AccountID int
 }
 
 func (b *BondTrade) create() error {
