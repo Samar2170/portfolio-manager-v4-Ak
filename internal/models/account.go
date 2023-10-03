@@ -78,6 +78,14 @@ func GetDematAccountsByUserCID(userCID string) ([]DematAccount, error) {
 	}
 	return dematAccounts, nil
 }
+func GetDematAccountIDsByUserCID(userCID string) ([]int, error) {
+	var dematAccountIDs []int
+	err := db.DB.Model(&DematAccount{}).Where("user_c_id = ?", userCID).Select("id").Find(&dematAccountIDs).Error
+	if err != nil {
+		return nil, err
+	}
+	return dematAccountIDs, nil
+}
 func GetBankAccountsByUserCID(userCID string) ([]BankAccount, error) {
 	var bankAccounts []BankAccount
 	err := db.DB.Where("user_c_id = ?", userCID).Find(&bankAccounts).Error

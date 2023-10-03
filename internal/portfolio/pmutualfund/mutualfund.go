@@ -7,6 +7,7 @@ import (
 
 	"github.com/samar2170/portfolio-manager-v4/internal"
 	"github.com/samar2170/portfolio-manager-v4/internal/models"
+	portfoliobase "github.com/samar2170/portfolio-manager-v4/internal/portfolio/portfolio-base"
 	"github.com/samar2170/portfolio-manager-v4/pkg/db"
 	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
 	mutualfund "github.com/samar2170/portfolio-manager-v4/security/mutual-fund"
@@ -75,6 +76,15 @@ func (m *MutualFundTrade) GetAccount() models.DematAccount {
 func (m *MutualFundTrade) GetInvestedValue() float64 {
 	return m.Price * float64(m.Quantity)
 }
+func (m *MutualFundTrade) GetTradeData() portfoliobase.TradeData {
+	return portfoliobase.TradeData{
+		Symbol:        m.MutualFund.SchemeNavName,
+		Quantity:      m.Quantity,
+		Price:         m.Price,
+		InvestedValue: m.GetInvestedValue(),
+	}
+}
+
 func (mf *MutualFundHolding) create() error {
 	return db.DB.Create(mf).Error
 }

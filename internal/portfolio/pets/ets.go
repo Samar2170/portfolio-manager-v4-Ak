@@ -7,6 +7,7 @@ import (
 
 	"github.com/samar2170/portfolio-manager-v4/internal"
 	"github.com/samar2170/portfolio-manager-v4/internal/models"
+	portfoliobase "github.com/samar2170/portfolio-manager-v4/internal/portfolio/portfolio-base"
 	"github.com/samar2170/portfolio-manager-v4/pkg/db"
 	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
 	"github.com/samar2170/portfolio-manager-v4/security/ets"
@@ -74,6 +75,14 @@ func (e *ETSHolding) update() error {
 }
 func (e *ETSHolding) getInvestedValue() float64 {
 	return float64(e.Quantity) * e.BuyPrice
+}
+func (e *ETSTrade) GetTradeData() portfoliobase.TradeData {
+	return portfoliobase.TradeData{
+		Symbol:        e.ETS.Name,
+		Quantity:      float64(e.Quantity),
+		Price:         e.Price,
+		InvestedValue: e.GetInvestedValue(),
+	}
 }
 
 func (e *ETSTrade) create() error {

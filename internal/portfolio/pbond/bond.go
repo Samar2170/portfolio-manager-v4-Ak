@@ -7,6 +7,7 @@ import (
 
 	"github.com/samar2170/portfolio-manager-v4/internal"
 	"github.com/samar2170/portfolio-manager-v4/internal/models"
+	portfoliobase "github.com/samar2170/portfolio-manager-v4/internal/portfolio/portfolio-base"
 	"github.com/samar2170/portfolio-manager-v4/pkg/db"
 	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
 	"github.com/samar2170/portfolio-manager-v4/security/bond"
@@ -76,6 +77,15 @@ func (b *BondTrade) GetAccount() models.DematAccount {
 func (b *BondTrade) GetInvestedValue() float64 {
 	return b.Price * float64(b.Quantity)
 }
+func (b *BondTrade) GetTradeData() portfoliobase.TradeData {
+	return portfoliobase.TradeData{
+		Symbol:        b.Bond.Symbol,
+		Quantity:      float64(b.Quantity),
+		Price:         b.Price,
+		InvestedValue: b.GetInvestedValue(),
+	}
+}
+
 func (b *BondHolding) create() error {
 	return db.DB.Create(b).Error
 }
