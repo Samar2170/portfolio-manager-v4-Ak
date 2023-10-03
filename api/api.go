@@ -30,6 +30,8 @@ func StartServer() {
 	subroute.POST("/register-trade/:security/", registerTrade)
 	subroute.GET("/list-trade/:security/", listTrades)
 
+	subroute.GET("/list-holding/:security/", listHoldings)
+
 	subroute.GET("/download-trade-template", downloadTradeTemplate)
 	subroute.POST("/upload-trade-sheet", uploadTradeSheet)
 

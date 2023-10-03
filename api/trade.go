@@ -11,6 +11,7 @@ import (
 	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pbond"
 	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pets"
 	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pmutualfund"
+	portfoliobase "github.com/samar2170/portfolio-manager-v4/internal/portfolio/portfolio-base"
 	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pstock"
 	"github.com/samar2170/portfolio-manager-v4/pkg/response"
 )
@@ -18,7 +19,7 @@ import (
 func registerTrade(c echo.Context) error {
 	security := c.Param("security")
 	user := c.Get("user").(models.User)
-	var trade portfolio.TradeInterface
+	var trade portfoliobase.TradeInterface
 	var err error
 	switch security {
 	case "stock":

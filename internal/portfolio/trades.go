@@ -1,9 +1,6 @@
 package portfolio
 
 import (
-	"crypto/sha1"
-	"fmt"
-
 	"github.com/samar2170/portfolio-manager-v4/internal/models"
 	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pbond"
 	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pets"
@@ -12,43 +9,11 @@ import (
 	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pstock"
 	"github.com/samar2170/portfolio-manager-v4/pkg/db"
 	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
-	"github.com/samar2170/portfolio-manager-v4/pkg/utils/structs"
-	"gorm.io/gorm"
+	"golang.org/x/exp/slices"
 )
-
-var (
-	limit = 50
-)
-
-type TradeFilters struct {
-	Security []string
-	SortBy   string
-	Page     int
-}
-type BlockHash struct {
-	*gorm.Model
-	UserCID      string
-	Hash         string
-	PreviousHash string
-}
-
-func (b *BlockHash) create() error {
-	return db.DB.Create(b).Error
-}
-func GetLatestBlockHash(userCID string) (BlockHash, error) {
-	var b BlockHash
-	err := db.DB.Where("user_cid = ?", userCID).Last(&b).Error
-	return b, err
-}
-
-type TradeInterface interface {
-	GetAccount() models.DematAccount
-	GetInvestedValue() float64
-	GetTradeData() portfoliobase.TradeData
-}
 
 // lets do it blockchain style
-func RegisterTrade(td TradeInterface) error {
+func RegisterTrade(td portfoliobase.TradeInterface) error {
 	var err error
 	switch td := td.(type) {
 	case *pstock.StockTrade:
@@ -62,30 +27,6 @@ func RegisterTrade(td TradeInterface) error {
 	}
 	// createHashBlockForTrade(&td)
 	return err
-}
-
-func createHashBlockForTrade(td *TradeInterface) error {
-	s := structs.New(td)
-	m := fmt.Sprint(s.Map())
-	accountCID := (*td).GetAccount().UserCID
-	latestBlock, err := GetLatestBlockHash(accountCID)
-	if err != nil {
-		return err
-	}
-	hasher := sha1.New()
-	hasher.Write([]byte(m))
-	hash := hasher.Sum(nil)
-	hashString := fmt.Sprintf("%x", hash)
-	blockHash := BlockHash{
-		UserCID:      accountCID,
-		Hash:         hashString,
-		PreviousHash: latestBlock.Hash,
-	}
-	err = blockHash.create()
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func GetTrades(tf TradeFilters, userCID string) ([]portfoliobase.TradeData, error) {
@@ -123,5 +64,92 @@ func GetTrades(tf TradeFilters, userCID string) ([]portfoliobase.TradeData, erro
 	for _, e := range et {
 		trades = append(trades, e.GetTradeData())
 	}
+
+	switch tf.SortBy {
+	case "name":
+		slices.SortFunc(trades, nameComp)
+	case "date":
+		slices.SortFunc(trades, dateComp)
+	case "value":
+		slices.SortFunc(trades, valueComp)
+	default:
+		slices.SortFunc(trades, valueComp)
+	}
+	// if tf.Page == 0 {
+	// 	tf.Page = 1
+	// }
+	// aoffset := (tf.Page - 1) * limit
+	// alimit := aoffset + limit
+	// if alimit > len(trades) {
+	// 	return []portfoliobase.TradeData{}, errors.New("thats all")
+	// }
+	// return trades[aoffset:alimit], nil
 	return trades, nil
+}
+
+func GetHoldings(tf TradeFilters, userCID string) ([]portfoliobase.HoldingData, error) {
+	var err error
+	var holdings []portfoliobase.HoldingData
+	var sh []pstock.StockHolding
+	var bh []pbond.BondHolding
+	var eh []pets.ETSHolding
+	var mfh []pmutualfund.MutualFundHolding
+	dematAccounts, err := models.GetDematAccountIDsByUserCID(userCID)
+	if err != nil {
+		return []portfoliobase.HoldingData{}, err
+	}
+	if utils.ArrayContains(tf.Security, "stock") || utils.ArrayContains(tf.Security, "all") {
+		err = db.DB.Model(pstock.StockHolding{}).Preload("Stock").Where("account_id IN ?", dematAccounts).Find(&sh).Error
+	}
+	if utils.ArrayContains(tf.Security, "bond") || utils.ArrayContains(tf.Security, "all") {
+		err = db.DB.Model(pbond.BondHolding{}).Preload("Bond").Where("account_id IN ?", dematAccounts).Find(&bh).Error
+	}
+	if utils.ArrayContains(tf.Security, "ets") || utils.ArrayContains(tf.Security, "all") {
+		err = db.DB.Model(pets.ETSHolding{}).Preload("ETS").Where("account_id IN ?", dematAccounts).Find(&eh).Error
+	}
+	if utils.ArrayContains(tf.Security, "mutual-fund") || utils.ArrayContains(tf.Security, "all") {
+		err = db.DB.Model(pmutualfund.MutualFundHolding{}).Preload("MutualFund").Where("account_id IN ?", dematAccounts).Find(&mfh).Error
+	}
+	for _, s := range sh {
+		holdings = append(holdings, portfoliobase.HoldingData{
+			Symbol: s.Stock.Symbol, Quantity: float64(s.Quantity), Price: s.BuyPrice,
+			InvestedValue: s.GetInvestedValue(),
+		})
+	}
+	for _, b := range bh {
+		holdings = append(holdings, portfoliobase.HoldingData{
+			Symbol: b.Bond.Symbol, Quantity: float64(b.Quantity), Price: b.BuyPrice,
+			InvestedValue: b.GetInvestedValue(),
+		})
+	}
+	for _, m := range mfh {
+		holdings = append(holdings, portfoliobase.HoldingData{
+			Symbol: m.MutualFund.SchemeNavName, Quantity: float64(m.Quantity), Price: m.BuyPrice,
+			InvestedValue: m.GetInvestedValue(),
+		})
+	}
+	for _, e := range eh {
+		holdings = append(holdings, portfoliobase.HoldingData{
+			Symbol: e.ETS.Symbol, Quantity: float64(e.Quantity), Price: e.BuyPrice,
+			InvestedValue: e.GetInvestedValue(),
+		})
+	}
+
+	// switch tf.SortBy {
+	// case "name":
+	// 	slices.SortFunc(holdings, nameComp)
+	// case "date":
+	// 	slices.SortFunc(holdings, dateComp)
+	// case "value":
+	// 	slices.SortFunc(holdings, valueComp)
+	// default:
+	// 	slices.SortFunc(holdings, valueComp)
+	// }
+	// aoffset := (tf.Page - 1) * limit
+	// alimit := aoffset + limit
+	// if alimit > len(trades) {
+	// 	return []portfoliobase.TradeData{}, errors.New("thats all")
+	// }
+	return holdings, nil
+
 }

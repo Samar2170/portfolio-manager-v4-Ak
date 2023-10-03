@@ -83,6 +83,7 @@ func (b *BondTrade) GetTradeData() portfoliobase.TradeData {
 		Quantity:      float64(b.Quantity),
 		Price:         b.Price,
 		InvestedValue: b.GetInvestedValue(),
+		Date:          b.TradeDate,
 	}
 }
 
@@ -94,7 +95,7 @@ func (b *BondHolding) update() error {
 	return db.DB.Save(b).Error
 }
 
-func (b *BondHolding) getInvestedValue() float64 {
+func (b *BondHolding) GetInvestedValue() float64 {
 	return float64(b.Quantity) * b.BuyPrice
 }
 
@@ -111,7 +112,7 @@ func RegisterBondTrade(b *BondTrade) error {
 		}
 		if strings.ToLower(b.TradeType) == "buy" {
 			holding.Quantity += b.Quantity
-			holding.BuyPrice = (holding.getInvestedValue() + b.GetInvestedValue()) / (float64(holding.Quantity) + float64(b.Quantity))
+			holding.BuyPrice = (holding.GetInvestedValue() + b.GetInvestedValue()) / (float64(holding.Quantity) + float64(b.Quantity))
 		} else {
 			holding.Quantity -= b.Quantity
 		}

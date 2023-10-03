@@ -82,7 +82,9 @@ func (m *MutualFundTrade) GetTradeData() portfoliobase.TradeData {
 		Quantity:      m.Quantity,
 		Price:         m.Price,
 		InvestedValue: m.GetInvestedValue(),
+		Date:          m.TradeDate,
 	}
+
 }
 
 func (mf *MutualFundHolding) create() error {
@@ -92,7 +94,7 @@ func (mf *MutualFundHolding) create() error {
 func (mf *MutualFundHolding) update() error {
 	return db.DB.Save(mf).Error
 }
-func (mf *MutualFundHolding) getInvestedValue() float64 {
+func (mf *MutualFundHolding) GetInvestedValue() float64 {
 	return float64(mf.Quantity) * mf.BuyPrice
 }
 
@@ -109,7 +111,7 @@ func RegisterMutualFundTrade(m *MutualFundTrade) error {
 		}
 		if strings.ToLower(m.TradeType) == "buy" {
 			holding.Quantity += m.Quantity
-			holding.BuyPrice = (holding.getInvestedValue() + m.GetInvestedValue()) / (float64(holding.Quantity) + float64(m.Quantity))
+			holding.BuyPrice = (holding.GetInvestedValue() + m.GetInvestedValue()) / (float64(holding.Quantity) + float64(m.Quantity))
 		} else {
 			holding.Quantity -= m.Quantity
 		}

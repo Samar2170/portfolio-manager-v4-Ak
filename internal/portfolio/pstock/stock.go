@@ -82,6 +82,7 @@ func (s *StockTrade) GetTradeData() portfoliobase.TradeData {
 		Quantity:      float64(s.Quantity),
 		Price:         s.Price,
 		InvestedValue: s.GetInvestedValue(),
+		Date:          s.TradeDate,
 	}
 }
 

@@ -73,7 +73,7 @@ func (e *ETSHolding) create() error {
 func (e *ETSHolding) update() error {
 	return db.DB.Save(e).Error
 }
-func (e *ETSHolding) getInvestedValue() float64 {
+func (e *ETSHolding) GetInvestedValue() float64 {
 	return float64(e.Quantity) * e.BuyPrice
 }
 func (e *ETSTrade) GetTradeData() portfoliobase.TradeData {
@@ -82,6 +82,7 @@ func (e *ETSTrade) GetTradeData() portfoliobase.TradeData {
 		Quantity:      float64(e.Quantity),
 		Price:         e.Price,
 		InvestedValue: e.GetInvestedValue(),
+		Date:          e.TradeDate,
 	}
 }
 
@@ -108,7 +109,7 @@ func RegisterETSTrade(e *ETSTrade) error {
 		}
 		if strings.ToLower(e.TradeType) == "buy" {
 			holding.Quantity += e.Quantity
-			holding.BuyPrice = (holding.getInvestedValue() + e.GetInvestedValue()) / (float64(holding.Quantity) + float64(e.Quantity))
+			holding.BuyPrice = (holding.GetInvestedValue() + e.GetInvestedValue()) / (float64(holding.Quantity) + float64(e.Quantity))
 		} else {
 			holding.Quantity -= e.Quantity
 		}
