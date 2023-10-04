@@ -1,9 +1,6 @@
 package api
 
 import (
-	"strconv"
-	"strings"
-
 	"github.com/labstack/echo/v4"
 	"github.com/samar2170/portfolio-manager-v4/internal"
 	"github.com/samar2170/portfolio-manager-v4/internal/models"
@@ -13,6 +10,7 @@ import (
 	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pmutualfund"
 	portfoliobase "github.com/samar2170/portfolio-manager-v4/internal/portfolio/portfolio-base"
 	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pstock"
+	"github.com/samar2170/portfolio-manager-v4/pkg/mw"
 	"github.com/samar2170/portfolio-manager-v4/pkg/response"
 )
 
@@ -68,30 +66,9 @@ func registerTrade(c echo.Context) error {
 
 // trades can be filtered by security type and pagination
 
-func getTradeFilters(c *echo.Context) portfolio.TradeFilters {
-	var tf portfolio.TradeFilters
-	securityParam := (*c).Param("security")
-	securitiesSplit := strings.Split(securityParam, ",")
-	var securities []string
-	for _, s := range securitiesSplit {
-		securities = append(securities, s)
-	}
-	tf.Security = securities
-	tf.SortBy = (*c).QueryParam("sort_by")
-	pageNo := (*c).QueryParam("page")
-	pageNoParsed, err := strconv.ParseInt(pageNo, 10, 64)
-	if err != nil {
-		tf.Page = 1
-	}
-	if tf.Page == 0 {
-		tf.Page = int(pageNoParsed)
-	}
-	return tf
-}
-
 func listTrades(c echo.Context) error {
 	user := c.Get("user").(models.User)
-	tf := getTradeFilters(&c)
+	tf := mw.GetTradeFilters(&c)
 	trades, err := portfolio.GetTrades(tf, user.UserCID)
 	if err != nil {
 		return c.JSON(response.BadRequestResponseEcho(err.Error()))

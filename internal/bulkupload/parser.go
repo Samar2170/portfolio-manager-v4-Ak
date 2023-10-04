@@ -22,6 +22,7 @@ func ParseBulkUploadSheets() {
 
 }
 
+// TODO: complete this
 func parseBulkUploadTradeSheet(buId uint) error {
 	var err error
 	var stockRows [][]string

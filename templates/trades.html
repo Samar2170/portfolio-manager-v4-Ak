@@ -1,0 +1,101 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+    <title>Trades</title>
+</head>
+
+<body>
+    <h1>Trades</h1>
+    <table>
+        <tr>
+            <th>Symbol</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Value</th>
+            <th>Date</th>
+        </tr>
+    {{range .trades}}
+    <tr>
+        <td>{{.symbol}}</td>
+        <td>{{.quantity}}</td>
+        <td>{{.price}}</td>
+        <td>{{.invested_value}}</td>
+        <td>{{.date}}</td>
+    </tr>
+    {{end}}
+
+    </table>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trades</title>
+
+    <!-- Include HTMX and Tailwind CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css">
+    <script src="https://unpkg.com/htmx.org@1.6.1/dist/htmx.min.js"></script>
+</head>
+<body>
+
+<h1 class="text-2xl font-bold mb-4">Trades</h1>
+
+<!-- Add a button to trigger a table update -->
+<!-- <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+        hx-get="/update-trades"
+        hx-target="#trade-table"
+        hx-swap="outerHTML">
+    Update Table
+</button> -->
+
+<table id="trade-table" class="table-auto">
+    <thead>
+    <tr>
+        <th class="px-4 py-2">Symbol</th>
+        <th class="px-4 py-2">Quantity</th>
+        <th class="px-4 py-2">Price</th>
+        <th class="px-4 py-2">Value</th>
+        <th class="px-4 py-2">Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range .trades}}
+    <tr>
+        <td class="border px-4 py-2">{{.symbol}}</td>
+        <td class="border px-4 py-2">{{.quantity}}</td>
+        <td class="border px-4 py-2">{{.price}}</td>
+        <td class="border px-4 py-2">{{.invested_value}}</td>
+        <td class="border px-4 py-2">{{.date}}</td>
+    </tr>
+    {{end}}
+    </tbody>
+</table>
+
+<!-- Add a loading indicator when updating the table -->
+<div id="loading" class="hidden text-center mt-4">
+    <p class="text-gray-500">Loading...</p>
+</div>
+
+<!-- Add a script to hide/show the loading indicator -->
+<script>
+    htmx.on("hx:start", function (evt) {
+        if (evt.target.id === "trade-table") {
+            document.getElementById("loading").classList.remove("hidden");
+        }
+    });
+
+    htmx.on("hx:complete", function (evt) {
+        if (evt.target.id === "trade-table") {
+            document.getElementById("loading").classList.add("hidden");
+        }
+    });
+</script>
+
+</body>
+</html>
