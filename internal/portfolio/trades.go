@@ -67,13 +67,13 @@ func GetTrades(tf TradeFilters, userCID string) ([]portfoliobase.TradeData, erro
 
 	switch tf.SortBy {
 	case "name":
-		slices.SortFunc(trades, nameComp)
+		slices.SortFunc(trades, nameComp[portfoliobase.TradeData])
 	case "date":
 		slices.SortFunc(trades, dateComp)
 	case "value":
-		slices.SortFunc(trades, valueComp)
+		slices.SortFunc(trades, valueComp[portfoliobase.TradeData])
 	default:
-		slices.SortFunc(trades, valueComp)
+		slices.SortFunc(trades, valueComp[portfoliobase.TradeData])
 	}
 	// if tf.Page == 0 {
 	// 	tf.Page = 1
@@ -135,16 +135,16 @@ func GetHoldings(tf TradeFilters, userCID string) ([]portfoliobase.HoldingData, 
 		})
 	}
 
-	// switch tf.SortBy {
-	// case "name":
-	// 	slices.SortFunc(holdings, nameComp)
+	switch tf.SortBy {
+	case "name":
+		slices.SortFunc(holdings, nameComp[portfoliobase.HoldingData])
 	// case "date":
 	// 	slices.SortFunc(holdings, dateComp)
-	// case "value":
-	// 	slices.SortFunc(holdings, valueComp)
-	// default:
-	// 	slices.SortFunc(holdings, valueComp)
-	// }
+	case "value":
+		slices.SortFunc(holdings, valueComp[portfoliobase.HoldingData])
+	default:
+		slices.SortFunc(holdings, valueComp[portfoliobase.HoldingData])
+	}
 	// aoffset := (tf.Page - 1) * limit
 	// alimit := aoffset + limit
 	// if alimit > len(trades) {
