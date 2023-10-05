@@ -6,14 +6,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/samar2170/portfolio-manager-v4/api"
-	"github.com/samar2170/portfolio-manager-v4/internal/bulkupload"
-	"github.com/samar2170/portfolio-manager-v4/jobs"
+	"github.com/samar2170/portfolio-manager-v4-Ak/api"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/bulkupload"
+	"github.com/samar2170/portfolio-manager-v4-Ak/jobs"
 
-	"github.com/samar2170/portfolio-manager-v4/security/bond"
-	"github.com/samar2170/portfolio-manager-v4/security/ets"
-	mutualfund "github.com/samar2170/portfolio-manager-v4/security/mutual-fund"
-	"github.com/samar2170/portfolio-manager-v4/security/stock"
+	"github.com/samar2170/portfolio-manager-v4-Ak/security/bond"
+	"github.com/samar2170/portfolio-manager-v4-Ak/security/ets"
+	mutualfund "github.com/samar2170/portfolio-manager-v4-Ak/security/mutual-fund"
+	"github.com/samar2170/portfolio-manager-v4-Ak/security/stock"
 )
 
 func main() {

@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/samar2170/portfolio-manager-v4/internal"
-	"github.com/samar2170/portfolio-manager-v4/pkg/response"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/response"
 )
 
 func signup(c echo.Context) error {

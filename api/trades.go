@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/samar2170/portfolio-manager-v4/internal/bulkupload"
-	"github.com/samar2170/portfolio-manager-v4/pkg/response"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/bulkupload"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/response"
 )
 
 func downloadTradeTemplate(c echo.Context) error {

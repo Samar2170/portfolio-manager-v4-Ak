@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/samar2170/portfolio-manager-v4/internal/models"
-	"github.com/samar2170/portfolio-manager-v4/internal/portfolio"
-	"github.com/samar2170/portfolio-manager-v4/pkg/mw"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/models"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/mw"
 )
 
 func ViewTrades(c echo.Context) error {

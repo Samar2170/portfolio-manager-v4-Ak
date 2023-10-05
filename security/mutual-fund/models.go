@@ -3,7 +3,7 @@ package mutualfund
 import (
 	"time"
 
-	"github.com/samar2170/portfolio-manager-v4/pkg/db"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/db"
 	"gorm.io/gorm"
 )
 

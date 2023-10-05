@@ -8,7 +8,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/samar2170/portfolio-manager-v4/internal/models"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/models"
 )
 
 type RequestUser struct {
@@ -46,7 +46,7 @@ func createToken(u RequestUser) (string, error) {
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			Issuer:    "portfolio-manager-ak",
+			Issuer:    "portfolio-manager-Ak",
 			Subject:   "user token",
 		},
 	}

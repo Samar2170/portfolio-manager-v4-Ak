@@ -4,9 +4,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/samar2170/portfolio-manager-v4/pkg/db"
-	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
-	"github.com/samar2170/portfolio-manager-v4/security/fetch"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/db"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/utils"
+	"github.com/samar2170/portfolio-manager-v4-Ak/security/fetch"
 )
 
 func UpdateStockPrices() error {

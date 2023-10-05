@@ -1,4 +1,4 @@
-module github.com/samar2170/portfolio-manager-v4
+module github.com/samar2170/portfolio-manager-v4-Ak
 
 go 1.19
 

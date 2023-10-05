@@ -1,6 +1,6 @@
 package internal
 
-import "github.com/samar2170/portfolio-manager-v4/internal/models"
+import "github.com/samar2170/portfolio-manager-v4-Ak/internal/models"
 
 func RegisterBankAccount(ba BankAccountRequest, userCID string) error {
 	_, err := models.GetUserByCID(userCID)

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/samar2170/portfolio-manager-v4/internal/portfolio"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio"
 )
 
 func GetTradeFilters(c *echo.Context) portfolio.TradeFilters {

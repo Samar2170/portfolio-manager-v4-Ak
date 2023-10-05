@@ -5,12 +5,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/samar2170/portfolio-manager-v4/internal"
-	"github.com/samar2170/portfolio-manager-v4/internal/models"
-	portfoliobase "github.com/samar2170/portfolio-manager-v4/internal/portfolio/portfolio-base"
-	"github.com/samar2170/portfolio-manager-v4/pkg/db"
-	"github.com/samar2170/portfolio-manager-v4/pkg/utils"
-	"github.com/samar2170/portfolio-manager-v4/security/bond"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/models"
+	portfoliobase "github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/portfolio-base"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/db"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/utils"
+	"github.com/samar2170/portfolio-manager-v4-Ak/security/bond"
 	"gorm.io/gorm"
 )
 

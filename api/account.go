@@ -4,9 +4,9 @@ import (
 	"log"
 
 	"github.com/labstack/echo/v4"
-	"github.com/samar2170/portfolio-manager-v4/internal"
-	"github.com/samar2170/portfolio-manager-v4/internal/models"
-	"github.com/samar2170/portfolio-manager-v4/pkg/response"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/models"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/response"
 )
 
 func registerAccount(c echo.Context) error {

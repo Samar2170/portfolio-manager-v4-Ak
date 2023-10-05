@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"github.com/samar2170/portfolio-manager-v4/client/cognitio/cauth"
+	"github.com/samar2170/portfolio-manager-v4-Ak/client/cognitio/cauth"
 	"github.com/spf13/viper"
 )
 

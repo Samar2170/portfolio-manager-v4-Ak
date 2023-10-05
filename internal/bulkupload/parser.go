@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pstock"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/pstock"
 	"github.com/xuri/excelize/v2"
 )
 

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-co-op/gocron"
-	"github.com/samar2170/portfolio-manager-v4/security/stock"
+	"github.com/samar2170/portfolio-manager-v4-Ak/security/stock"
 )
 
 var cronLogger *log.Logger

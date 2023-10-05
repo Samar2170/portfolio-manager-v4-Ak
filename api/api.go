@@ -9,8 +9,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/samar2170/portfolio-manager-v4/api/analytics"
-	"github.com/samar2170/portfolio-manager-v4/pkg/mw"
+	"github.com/samar2170/portfolio-manager-v4-Ak/api/analytics"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/mw"
 	"github.com/spf13/viper"
 )
 

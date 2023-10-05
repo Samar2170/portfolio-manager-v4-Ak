@@ -3,7 +3,7 @@ package portfoliobase
 import (
 	"time"
 
-	"github.com/samar2170/portfolio-manager-v4/internal/models"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/models"
 )
 
 type TradeInterface interface {

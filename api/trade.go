@@ -2,16 +2,16 @@ package api
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/samar2170/portfolio-manager-v4/internal"
-	"github.com/samar2170/portfolio-manager-v4/internal/models"
-	"github.com/samar2170/portfolio-manager-v4/internal/portfolio"
-	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pbond"
-	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pets"
-	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pmutualfund"
-	portfoliobase "github.com/samar2170/portfolio-manager-v4/internal/portfolio/portfolio-base"
-	"github.com/samar2170/portfolio-manager-v4/internal/portfolio/pstock"
-	"github.com/samar2170/portfolio-manager-v4/pkg/mw"
-	"github.com/samar2170/portfolio-manager-v4/pkg/response"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/models"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/pbond"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/pets"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/pmutualfund"
+	portfoliobase "github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/portfolio-base"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/pstock"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/mw"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/response"
 )
 
 func registerTrade(c echo.Context) error {

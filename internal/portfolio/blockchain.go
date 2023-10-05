@@ -4,9 +4,9 @@ import (
 	"crypto/sha1"
 	"fmt"
 
-	portfoliobase "github.com/samar2170/portfolio-manager-v4/internal/portfolio/portfolio-base"
-	"github.com/samar2170/portfolio-manager-v4/pkg/db"
-	"github.com/samar2170/portfolio-manager-v4/pkg/utils/structs"
+	portfoliobase "github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/portfolio-base"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/db"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/utils/structs"
 	"gorm.io/gorm"
 )
 

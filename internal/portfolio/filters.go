@@ -1,6 +1,6 @@
 package portfolio
 
-import portfoliobase "github.com/samar2170/portfolio-manager-v4/internal/portfolio/portfolio-base"
+import portfoliobase "github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/portfolio-base"
 
 var (
 	limit  = 50

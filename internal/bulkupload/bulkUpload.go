@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/samar2170/portfolio-manager-v4/internal"
-	"github.com/samar2170/portfolio-manager-v4/internal/models"
-	"github.com/samar2170/portfolio-manager-v4/pkg/utils/structs"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/models"
+	"github.com/samar2170/portfolio-manager-v4-Ak/pkg/utils/structs"
 	"github.com/xuri/excelize/v2"
 )
 
