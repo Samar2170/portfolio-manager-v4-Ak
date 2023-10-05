@@ -8,6 +8,7 @@ import (
 
 	"github.com/samar2170/portfolio-manager-v4/api"
 	"github.com/samar2170/portfolio-manager-v4/internal/bulkupload"
+	"github.com/samar2170/portfolio-manager-v4/jobs"
 
 	"github.com/samar2170/portfolio-manager-v4/security/bond"
 	"github.com/samar2170/portfolio-manager-v4/security/ets"
@@ -27,11 +28,27 @@ func main() {
 		dev()
 	default:
 		fmt.Println("starting")
-		api.StartServer()
+		start()
 	}
 	fmt.Println(time.Since(t))
 }
 
+func start() {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		api.StartServer()
+		wg.Done()
+	}()
+	wg.Add(1)
+	go func() {
+		jobs.StartCronServer()
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+}
 func setup() {
 	var wg sync.WaitGroup
 	wg.Add(4)

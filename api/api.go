@@ -1,8 +1,11 @@
 package api
 
 import (
+	"fmt"
 	"html/template"
 	"io"
+	"os"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -29,10 +32,21 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 }
 
 func StartServer() {
+	t := time.Now()
 	e := echo.New()
-	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(mw.ApiKeyMiddleware())
+	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(20)))
+	file, err := os.OpenFile(fmt.Sprintf("logs/Api_logs_%d-%d-%d", t.Day(), int(t.Month()), t.Year()), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		panic(err)
+	}
+	DefaultLoggerConfig := middleware.LoggerConfig{
+		Skipper: middleware.DefaultSkipper,
+		Format:  "method=${method}, uri=${uri}, status=${status}, latency=${latency_human}\n",
+		Output:  file,
+	}
+	e.Use(middleware.LoggerWithConfig(DefaultLoggerConfig))
 
 	subroute := e.Group("/api/v1")
 

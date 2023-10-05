@@ -7,3 +7,5 @@ gorm.db
 __debug_bin*
 
 /uploads/**
+
+/logs/**
