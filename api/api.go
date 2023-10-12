@@ -30,7 +30,9 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 
 	return t.template.ExecuteTemplate(w, name, data)
 }
-
+func health(c echo.Context) error {
+	return c.String(200, "OK")
+}
 func StartServer() {
 	t := time.Now()
 	e := echo.New()
@@ -54,7 +56,7 @@ func StartServer() {
 	subroute.POST("/login", login)
 	subroute.GET("/generate-api-key", generateApiKey)
 
-	subroute.POST("/register-account/:accountType", registerAccount)
+	subroute.POST("/register-account/:accountType/", registerAccount)
 	subroute.GET("/account/:accountType/", listAccounts)
 
 	subroute.POST("/register-trade/:security/", registerTrade)
@@ -64,6 +66,8 @@ func StartServer() {
 
 	subroute.GET("/download-trade-template", downloadTradeTemplate)
 	subroute.POST("/upload-trade-sheet", uploadTradeSheet)
+
+	subroute.GET("/health/", health)
 
 	renderer := &TemplateRenderer{
 		template: template.Must(template.ParseGlob("templates/*.html")),
