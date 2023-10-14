@@ -36,6 +36,9 @@ func NewStockTrade(symbol string, quantity int, price float64, tradeDate, tradeT
 	if err != nil {
 		return nil, err
 	}
+	if stock.Symbol == "" {
+		return nil, errors.New("stock does not exist")
+	}
 	t, err := utils.ParseTime(tradeDate, internal.TradeDateFormat)
 	if err != nil {
 		return nil, err
