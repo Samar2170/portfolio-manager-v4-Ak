@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/viper"
-	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -16,9 +15,7 @@ var DB *gorm.DB
 func connect() {
 	var err error
 	if environment == "prod" {
-		DB, err = gorm.Open(postgres.Open(DBURI), &gorm.Config{
-			DisableForeignKeyConstraintWhenMigrating: true,
-		})
+		DB, err = gorm.Open(sqlite.Open("prod.db"), &gorm.Config{})
 	} else {
 		DB, err = gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{})
 	}
