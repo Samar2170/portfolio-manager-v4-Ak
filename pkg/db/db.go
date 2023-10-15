@@ -15,9 +15,9 @@ var DB *gorm.DB
 func connect() {
 	var err error
 	if environment == "prod" {
-		DB, err = gorm.Open(sqlite.Open("prod.db"), &gorm.Config{})
+		DB, err = gorm.Open(sqlite.Open("db/prod.db"), &gorm.Config{})
 	} else {
-		DB, err = gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{})
+		DB, err = gorm.Open(sqlite.Open("db/gorm.db"), &gorm.Config{})
 	}
 	if err != nil {
 		panic(err)
