@@ -8,6 +8,6 @@ COPY . .
 RUN apt-get update && apt-get install -y build-essential
 RUN CGO_ENABLED=1 go build -o /portfolio-manager-v4-Ak
 
-EXPOSE 8080
+EXPOSE 8443
 
 CMD [ "/portfolio-manager-v4-Ak", "start"]
