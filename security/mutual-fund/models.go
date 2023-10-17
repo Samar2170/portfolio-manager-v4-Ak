@@ -47,20 +47,7 @@ func (m *MutualFund) getOrCreate() (MutualFund, error) {
 	return *m, err
 }
 
-func GetMutualFundBySchemeNavName(schemeNavName string) (MutualFund, error) {
-	var mf MutualFund
-	err := db.DB.First(&mf, "scheme_nav_name = ?", schemeNavName).Error
-	return mf, err
-}
-
-func SearchMutualFund(query string) MutualFund {
-	var mf MutualFund
-	db.DB.Where("scheme_nav_name ILIKE ?", query).Find(&mf)
-	return mf
-}
-
-func GetMutualFundByID(id int) (MutualFund, error) {
-	var mf MutualFund
-	err := db.DB.First(&mf, id).Error
-	return mf, err
+func CreateMutualFund(mf MutualFund) error {
+	_, err := mf.getOrCreate()
+	return err
 }

@@ -58,3 +58,16 @@ func GetBondBySymbol(symbol string) (Bond, error) {
 	err := db.DB.First(&b, "symbol = ?", symbol).Error
 	return b, err
 }
+func SearchBond(query string) ([]Bond, error) {
+	var bonds []Bond
+	err := db.DB.Where("symbol LIKE ?", "%"+query+"%").Find(&bonds).Error
+	if err != nil {
+		return nil, err
+	}
+	return bonds, nil
+}
+
+func CreateNewBond(bond Bond) error {
+	_, err := bond.getOrCreate()
+	return err
+}

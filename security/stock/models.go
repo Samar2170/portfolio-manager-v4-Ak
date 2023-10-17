@@ -61,24 +61,3 @@ func (s *Stock) GetLatestDate() (time.Time, error) {
 	err := db.DB.Find(&sph, "stock_id = ?", s.ID).Order("created_at desc").Limit(1).Error
 	return sph.Date, err
 }
-
-func GetAllStocks() ([]Stock, error) {
-	var stocks []Stock
-	err := db.DB.Find(&stocks).Error
-	if err != nil {
-		return stocks, err
-	}
-	return stocks, nil
-}
-
-func getPriceUpdatePendingStocks() ([]Stock, error) {
-	var stocks []Stock
-	err := db.DB.Find(&stocks, "price_to_be_updated = ?", true).Order("price_to_be_updated desc").Error
-	return stocks, err
-}
-
-func GetStockBySymbol(symbol string) (Stock, error) {
-	var stock Stock
-	err := db.DB.Find(&stock, "symbol = ?", symbol).Error
-	return stock, err
-}
