@@ -69,3 +69,8 @@ func SearchETS(query string) ([]ETS, error) {
 	ets = append(ets, ets2...)
 	return ets, nil
 }
+
+func CreateETS(ets ETS) error {
+	_, err := ets.getOrCreate()
+	return err
+}

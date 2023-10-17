@@ -66,3 +66,8 @@ func SearchBond(query string) ([]Bond, error) {
 	}
 	return bonds, nil
 }
+
+func CreateNewBond(bond Bond) error {
+	_, err := bond.getOrCreate()
+	return err
+}

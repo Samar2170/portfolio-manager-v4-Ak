@@ -42,3 +42,41 @@ func getSecurity(c echo.Context) error {
 	}
 
 }
+
+func addSecurity(c echo.Context) error {
+	security := c.Param("security")
+	switch security {
+	case "mutual-fund":
+		rMf := new(mutualfund.MutualFund)
+		if err := c.Bind(rMf); err != nil {
+			return c.JSON(response.BadRequestResponseEcho("Invalid Request Body  " + err.Error()))
+		}
+		err := mutualfund.CreateMutualFund(*rMf)
+		if err != nil {
+			return c.JSON(response.BadRequestResponseEcho("While creating Mutual Fund  " + err.Error()))
+		}
+		return c.JSON(response.SuccessResponseEcho("Mutual Fund Created Successfully"))
+	case "ets":
+		rEts := new(ets.ETS)
+		if err := c.Bind(rEts); err != nil {
+			return c.JSON(response.BadRequestResponseEcho("Invalid Request Body  " + err.Error()))
+		}
+		err := ets.CreateETS(*rEts)
+		if err != nil {
+			return c.JSON(response.BadRequestResponseEcho("While creating ETS  " + err.Error()))
+		}
+		return c.JSON(response.SuccessResponseEcho("ETS Created Successfully"))
+	case "bond":
+		rbond := new(bond.Bond)
+		if err := c.Bind(rbond); err != nil {
+			return c.JSON(response.BadRequestResponseEcho("Invalid Request Body  " + err.Error()))
+		}
+		err := bond.CreateNewBond(*rbond)
+		if err != nil {
+			return c.JSON(response.BadRequestResponseEcho("While creating bond  " + err.Error()))
+		}
+		return c.JSON(response.SuccessResponseEcho("Bond Created Successfully"))
+	default:
+		return c.JSON(response.NotFoundResponseEcho("Security Not Found"))
+	}
+}

@@ -46,3 +46,8 @@ func (m *MutualFund) getOrCreate() (MutualFund, error) {
 	err := db.DB.FirstOrCreate(&m, "scheme_nav_name = ?", m.SchemeNavName).Error
 	return *m, err
 }
+
+func CreateMutualFund(mf MutualFund) error {
+	_, err := mf.getOrCreate()
+	return err
+}
