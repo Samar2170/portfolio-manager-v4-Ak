@@ -71,6 +71,8 @@ func StartServer() {
 
 	subroute.GET("/health/", health)
 
+	subroute.GET("/security/:security/", getSecurity)
+
 	renderer := &TemplateRenderer{
 		template: template.Must(template.ParseGlob("templates/*.html")),
 	}

@@ -57,3 +57,15 @@ func GetETSBySymbol(symbol string) (ETS, error) {
 	err := db.DB.First(&e, "symbol = ?", symbol).Error
 	return e, err
 }
+
+func SearchETS(query string) ([]ETS, error) {
+	var ets []ETS
+	var ets2 []ETS
+	err := db.DB.Where("symbol LIKE ?", "%"+query+"%").Find(&ets).Error
+	if err != nil {
+		return nil, err
+	}
+	err = db.DB.Where("name LIKE ?", "%"+query+"%").Find(&ets2).Error
+	ets = append(ets, ets2...)
+	return ets, nil
+}
