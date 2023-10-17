@@ -15,11 +15,13 @@ import (
 )
 
 var SigningKey string
+var port string
 
 func init() {
 	viper.SetConfigFile(".env")
 	viper.ReadInConfig()
 	SigningKey = viper.GetString("SIGNING_KEY")
+	port = viper.GetString("PORT")
 }
 
 type TemplateRenderer struct {
@@ -78,6 +80,6 @@ func StartServer() {
 	analyticSubroute.Use(mw.ApiKeyMiddleware())
 	analyticSubroute.GET("/view-trades/:security/", analytics.ViewTrades).Name = "view-trades"
 	analyticSubroute.GET("/view-holdings/:security/", analytics.ViewHoldings).Name = "view-holdings"
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":" + port))
 
 }

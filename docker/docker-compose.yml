@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  api:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - "8443:8443"
+    volumes:
+      - ../db:/app/db
+      - ../uploads:/app/uploads
+    env_file:
+      - ../.env 
+    
