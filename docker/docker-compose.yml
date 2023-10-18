@@ -7,8 +7,11 @@ services:
     ports:
       - "8443:8443"
     volumes:
-      - ../db:/app/db
-      - ../uploads:/app/uploads
+      - uploads:/app/uploads
+      - db:/app/db
     env_file:
-      - ../.env 
-    
+      - ../.env
+
+volumes:
+  uploads:
+  db:
