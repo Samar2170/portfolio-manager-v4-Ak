@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-co-op/gocron"
+	"github.com/samar2170/portfolio-manager-v4-Ak/internal/portfolio/pstock"
 	"github.com/samar2170/portfolio-manager-v4-Ak/security/stock"
 )
 
@@ -29,6 +30,10 @@ func StartCronServer() {
 	s := gocron.NewScheduler(time.UTC)
 
 	s.Every(1).Day().At("00:00").Do(func() {
+		cronLogger.Println("Calculating Stock Prices" + t.String())
+		pstock.CalculatePriceToBeUpdatedRank()
+	})
+	s.Every(2).Hour().Do(func() {
 		cronLogger.Println("Updating Stock Prices" + t.String())
 		stock.UpdateStockPrices()
 	})

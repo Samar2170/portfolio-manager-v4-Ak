@@ -13,7 +13,7 @@ func GetAllStocks() ([]Stock, error) {
 
 func getPriceUpdatePendingStocks() ([]Stock, error) {
 	var stocks []Stock
-	err := db.DB.Find(&stocks, "price_to_be_updated = ?", true).Order("price_to_be_updated desc").Error
+	err := db.DB.Find(&stocks, "price_to_be_updated = ?", true).Order("price_to_be_updated_rank desc").Error
 	return stocks, err
 }
 
