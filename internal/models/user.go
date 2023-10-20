@@ -14,6 +14,7 @@ type User struct {
 	Password string
 	Email    string
 	ApiKey   string `gorm:"uniqueIndex"`
+	ApiKeyUH string
 }
 
 // User signs up/login, we call rpc, save CID and username,
@@ -25,8 +26,8 @@ func (u *User) update() error {
 	return db.DB.Save(u).Error
 }
 
-func (u *User) UpdateApiKey(hashedNewApiKey string) error {
-	return db.DB.Model(&u).Update("api_key", hashedNewApiKey).Error
+func (u *User) UpdateApiKey(apiKey string) error {
+	return db.DB.Model(&u).Update("api_key_uh", apiKey).Error
 }
 
 func GetUserByCID(userCID string) (User, error) {
@@ -43,9 +44,9 @@ func GetUserByUsername(username string) (User, error) {
 	err := db.DB.Where("username = ?", username).First(&u).Error
 	return u, err
 }
-func GetUserByApiKey(hashedapiKey string) (User, error) {
+func GetUserByApiKey(apiKey string) (User, error) {
 	var u User
-	err := db.DB.Where("api_key = ?", hashedapiKey).Find(&u).Error
+	err := db.DB.Where("api_key = ?", apiKey).Find(&u).Error
 	return u, err
 }
 

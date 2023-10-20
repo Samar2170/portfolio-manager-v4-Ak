@@ -79,12 +79,11 @@ func parseToken(token string) (models.User, error) {
 func GenerateApiKey(token string) (string, error) {
 	apiKey := generateApiKey()
 	log.Println(apiKey)
-	hashedApiKey := customHash(apiKey)
 	user, err := parseToken(token)
 	if err != nil {
 		return "", err
 	}
-	err = user.UpdateApiKey(hashedApiKey)
+	err = user.UpdateApiKey(apiKey)
 	if err != nil {
 		return "", err
 	}
@@ -92,8 +91,8 @@ func GenerateApiKey(token string) (string, error) {
 }
 
 func GetUserByApiKey(apiKey string) (models.User, error) {
-	hashedApiKey := customHash(apiKey)
-	user, err := models.GetUserByApiKey(hashedApiKey)
+	// hashedApiKey := customHash(apiKey)
+	user, err := models.GetUserByApiKey(apiKey)
 	return user, err
 }
 
