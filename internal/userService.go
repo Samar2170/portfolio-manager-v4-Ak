@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"crypto/sha256"
 	"errors"
 	"log"
 	"time"
@@ -9,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/samar2170/portfolio-manager-v4-Ak/internal/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type RequestUser struct {
@@ -31,11 +31,17 @@ func generateApiKey() string {
 	return uuid.New().String() + "-" + uuid.New().String()
 }
 
-func customHash(str string) string {
-	hasher := sha256.New()
-	hasher.Write([]byte(str))
-	bs := hasher.Sum(nil)
-	return string(bs)
+func customHash(str string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(str), 14)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
+}
+func checkPasswordHashed(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+
 }
 
 func createToken(u RequestUser) (string, error) {
@@ -98,11 +104,16 @@ func GetUserByApiKey(apiKey string) (models.User, error) {
 
 func Signup(s SignupRequest) error {
 	var err error
+	hashedPass, err := customHash(s.Password)
+	if err != nil {
+		return err
+	}
 	dbUser := models.User{
 		Username: s.Username,
 		UserCID:  getCIDForUser(),
-		Password: customHash(s.Password),
+		Password: hashedPass,
 		Email:    s.Email,
+		ApiKey:   s.Username,
 	}
 	err = models.CreateModelInstance(&dbUser)
 	if err != nil {
@@ -125,7 +136,7 @@ func Login(l LoginRequest) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if user.Password != customHash(l.Password) {
+	if !checkPasswordHashed(l.Password, user.Password) {
 		return "", errors.New("wrong password, try again")
 	}
 

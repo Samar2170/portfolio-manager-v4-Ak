@@ -46,7 +46,7 @@ func GetUserByUsername(username string) (User, error) {
 }
 func GetUserByApiKey(apiKey string) (User, error) {
 	var u User
-	err := db.DB.Where("api_key = ?", apiKey).Find(&u).Error
+	err := db.DB.Where("api_key_uh = ?", apiKey).Find(&u).Error
 	return u, err
 }
 
